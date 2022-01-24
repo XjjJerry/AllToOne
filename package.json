@@ -1,0 +1,19 @@
+{
+  "name": "alltoone",
+  "version": "1.0.0",
+  "description": "把多张图片以类似像素画的形式合成一张图片",
+  "main": "main.ts",
+  "scripts": {
+    "compile": "tsc --build tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XjjJerry/AllToOne.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XjjJerry/AllToOne/issues"
+  },
+  "homepage": "https://github.com/XjjJerry/AllToOne#readme"
+}

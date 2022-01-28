@@ -63,6 +63,12 @@ class Pixel {
         let serr = err.red + err.green + err.blue + err.alpha;
         return Math.sqrt(serr);
     }
+
+    static times(item: Pixel, k: number) {
+        let res = new Pixel(item.red, item.green, item.blue, item.alpha);
+        res.scale(k);
+        return res;
+    }
 }
 
 class PixelArray {

@@ -115,6 +115,80 @@ export class Render {
         }
     }
 
+    async drawCombineWithDither(targetUrl: string, sourceUrlList: [string], divX: number, divY: number, targetScale: number = 1) {
+        try {
+            const self = this;
+
+            let ttime = new Date().getTime();
+            let targetLoader = new ImageLoader(targetUrl);
+
+            let targetAvgMat = await new ImageCompute(targetLoader).computeAvgMat(divX, divY);
+            if (targetAvgMat == null) {
+                throw "compute target mat failed";
+            }
+            let tw = await targetLoader.getWidth();
+            let th = await targetLoader.getHeight();
+            if (targetScale != 1) {
+                tw = tw ? tw * targetScale : 1;
+                th = th ? th * targetScale : 1;
+                targetLoader.resize(tw, th);
+                targetAvgMat.widthStep = Math.floor(targetAvgMat.widthStep * targetScale);
+                targetAvgMat.heightStep = Math.floor(targetAvgMat.heightStep * targetScale);
+            }
+            console.log("init target cost:", new Date().getTime() - ttime, "ms");
+
+            let stime = new Date().getTime();
+
+            let sourceAvgList = await self.__getAndInitSource(sourceUrlList, targetAvgMat.widthStep, targetAvgMat.heightStep);
+            if (sourceAvgList == null) {
+                throw "compute sourceAvgList failed";
+            }
+
+            console.log("init source cost:", new Date().getTime() - stime, "ms");
+            if (self.__canvasDom != null) {
+                self.__canvasDom.width = tw ? tw : 1;
+                self.__canvasDom.height = th ? th : 1;
+            }
+            let ctx = self.__canvasDom?.getContext("2d");
+            for (let h = 0; h < targetAvgMat.heightCount; h++) {
+                for (let w = 0; w < targetAvgMat.widthCount; w++) {
+                    let index = h * targetAvgMat.widthCount + w;
+                    let targetAvg = targetAvgMat.mat[index];
+                    if (targetAvg == null) {
+                        throw "get target mat item failed";
+                    }
+                    let matchSource = self.__matchSource(sourceAvgList, targetAvg);
+                    if (matchSource == null) {
+                        throw "找不到啊";
+                    }
+                    let err = Pixel.minus(matchSource.avg, targetAvg);
+                    if (w < targetAvgMat.widthCount - 1) {
+                        let rindex = h * targetAvgMat.widthCount + w + 1;
+                        let rerr = Pixel.times(err, 3 / 8);
+                        targetAvgMat.mat[rindex] = Pixel.plus(targetAvgMat.mat[rindex], rerr);
+                    }
+                    if (h < targetAvgMat.heightCount - 1) {
+                        let bindex = (h + 1) * targetAvgMat.widthCount + w;
+                        let berr = Pixel.times(err, 3 / 8);
+                        targetAvgMat.mat[bindex] = Pixel.plus(targetAvgMat.mat[bindex], berr);
+                    }
+                    if (w < targetAvgMat.widthCount - 1 && h < targetAvgMat.heightCount - 1) {
+                        let rbindex = (h + 1) * targetAvgMat.widthCount + w + 1;
+                        let rberr = Pixel.times(err, 1 / 4);
+                        targetAvgMat.mat[rbindex] = Pixel.plus(targetAvgMat.mat[rbindex], rberr);
+                    }
+                    let tmpImageData = await matchSource.loader.getImageData();
+                    if (tmpImageData != null) {
+                        ctx?.putImageData(tmpImageData, w * targetAvgMat.widthStep, h * targetAvgMat.heightStep);
+                    }
+                }
+            }
+
+        } catch (ex) {
+            console.error(ex);
+        }
+    }
+
     async __initSource(url: string, width: number, height: number) {
         let tmpLoader = new ImageLoader(url);
         tmpLoader.resize(32, 32);

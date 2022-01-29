@@ -114,6 +114,10 @@ class PixelArray {
         }
         return new Pixel(r / self.__length, g / self.__length, b / self.__length, a / self.__length);
     }
+
+    count() {
+        return this.__length;
+    }
 }
 
 export {

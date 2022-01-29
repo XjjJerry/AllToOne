@@ -69,51 +69,48 @@ export class ImageLoader {
                 ctx: ctx
             });
         });
+        return self;
     }
 
     async getImageData(x?: number, y?: number, width?: number, height?: number) {
-        try {
-            const self = this;
-            const loadContent = await self.__loadContent;
-            if (loadContent == null) {
-                throw "get loadContent failed";
-            }
-            if (x != undefined) {
-                if (x < 0 || x >= loadContent.width) {
-                    throw "x bounds";
-                }
-            } else {
-                x = 0;
-            }
-            if (y != undefined) {
-                if (y < 0 || y >= loadContent.height) {
-                    throw "y bounds";
-                }
-            } else {
-                y = 0;
-            }
-            if (width != undefined) {
-                if (width <= 0 || x + width > loadContent.width) {
-                    throw "width bounds";
-                }
-            } else {
-                width = loadContent.width - x;
-            }
-            if (height != undefined) {
-                if (height <= 0 || y + height > loadContent.height) {
-                    throw "height bounds";
-                }
-            } else {
-                height = loadContent.height - y;
-            }
-            const imageData = loadContent.ctx.getImageData(x, y, width, height);
-            if (imageData == null) {
-                throw "load failed:get imageData failed";
-            }
-            return imageData;
-        } catch (ex) {
-            console.error(ex);
+        const self = this;
+        const loadContent = await self.__loadContent;
+        if (loadContent == null) {
+            throw "get loadContent failed";
         }
+        if (x != undefined) {
+            if (x < 0 || x >= loadContent.width) {
+                throw "x bounds";
+            }
+        } else {
+            x = 0;
+        }
+        if (y != undefined) {
+            if (y < 0 || y >= loadContent.height) {
+                throw "y bounds";
+            }
+        } else {
+            y = 0;
+        }
+        if (width != undefined) {
+            if (width <= 0 || x + width > loadContent.width) {
+                throw "width bounds";
+            }
+        } else {
+            width = loadContent.width - x;
+        }
+        if (height != undefined) {
+            if (height <= 0 || y + height > loadContent.height) {
+                throw "height bounds";
+            }
+        } else {
+            height = loadContent.height - y;
+        }
+        const imageData = loadContent.ctx.getImageData(x, y, width, height);
+        if (imageData == null) {
+            throw "load failed:get imageData failed";
+        }
+        return imageData;
     }
 
     async getWidth() {

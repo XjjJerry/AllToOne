@@ -32,4 +32,4 @@ drawCombine(targetUrl,sourceUrlList,divX,divY,targetScale=1)
 下面是Demo的演示效果，分别演示了4×4,8×8,16×16,32×32,64×64和128×128的生成效果。使用的素材出自画师QuAn(微博：\@\_\_QuAn\_，P站ID=6657532)
 Demo代码也在项目中给出（不含素材图片）。
 
-![](/demo.gif)
+![](https://user-images.githubusercontent.com/34260333/153440424-098fd895-c518-41cb-95dc-119c07dd8d3b.gif)

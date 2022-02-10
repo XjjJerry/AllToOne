@@ -4,7 +4,7 @@ require(["allToOne"], function (allToOne) {
     const target = "./img/20.webp";
     // 素材图片的URL列表，图片请自行准备
     const sourceList = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 26; i++) {
         let fileName = "./img/" + i + ".webp";
         sourceList.push(fileName);
     }
